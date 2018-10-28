@@ -1,0 +1,15 @@
+Window - top left: shows history of all past commits, referring to them by the short
+commit message they are committed with
+
+Window adjacent to this: shows the author of the respective patches
+
+Window - the top right corner: shows the dates of the respective commits
+
+Window - the bottom right: shows the files that have been affected byt this commit
+
+Window - mid left screen: shows more details about the commit i.e. name of committer, email,
+parent, child, branches, commitID and commit message
+
+Window - below this: shows the changes in diff format
+
+Window - below this: shows the edited file test/indent/shell.sh 

@@ -1,0 +1,83 @@
+Exercise 1.1:
+1. Done
+2. C-s H T M L
+3. C-s s c a v e n g e r M-b
+4. C-s s e l f - r e f e r e n t i a l M-b M-b
+5. C-s a r r o w M-b
+6. C-e
+7. C-a
+8. Yes, a faster way than arrow keys is to use the following commands to the above exercises.
+ C-s H T M L
+ C-s s c a v e n g e r M-b
+ C-s s e l f - r e f e r e n t i a l M-b M-b
+ C-s a r r o w M-b
+ C-e
+ C-a
+
+9. No
+10. Done
+
+Exercise 1.2:
+1. Done
+2. M-x g o t o - l i n e Enter 1 8 C-k
+3. C-s D E L C-a C-k
+4. C-s < ! - - C-a C-k C-k C-k C-k C-k
+5. C-s < ! - - C-b C-b C-d C-d C-d C-d C-d C-d C-d
+   C-n C-a C-k C-n C-k C-n C-k C-n C-k
+   C-s < ! - - C-a C-k
+
+Exercise 1.3:
+1. Done
+2. C-s A s s i g n m e n t SP 1 M-% A s s i g n m e n t SP 2 1 Enter y y n
+3. M-< C-s U T F - 8 M-% U S - A S C I I Enter y n
+4. C-M-s [ ^ [ : a s c i i : ] ] Enter C-a C-k
+5. C-s < / o l > C-o
+6. C-x C-s y
+
+Exercise 1.4:
+1. cat exer2.html exer2.diff >exer4.html
+2. Done
+3.4.
+M-> C-r < ! - - Enter C-SP C-e M-w M-x g o t o - l i n e 4 0 0 C-y M-> C-r < ! C-r Enter C-SP C-e M-w M-x g o t o - l i n e 3 7 9 C-y M-> C-r < ! C-r C-r Enter C-SP C-e M-w M-x g o t o - l i n e 3 3 5 C-y M-> C-r < ! C-r C-r C-r Enter C-SP C-e M-w M-x g o t o - l i n e  1 2 2 C-y M-> C-r < ! C-r C-r C-r C-r Enter C-SP C-e M-w M-x g o t o - l i n e 1 5 C-y
+
+5. C-s - - - C-a C-SP M-> Left C-d
+6. C-x u
+7. < ! - - M-> - - >
+8. M-> C-r < o l > C-r C-r C-r C-r C-r C-r
+Ans. 7 occurrences
+M-< M-x replace-string Enter <ol> Enter <OL> Enter
+9. C-x C-c y
+
+Exercise 1.5:
+1. M-x m a k e - d i r e c t o r y Enter junk Enter
+2. M-x d i r e d Enter j u n k C-x C-f h e l l o . c Enter C-x C-s
+3. M-x c o m p i l e Enter C-a C-k g c c SP - o SP t e m p SP hello.c E n t e r
+4. C-x C-f t e m p h e l l o - o u t Enter C-u M-! . / t e m p C-x C-s
+5. C-x C-f C-a C-k ~ / j u n k / h e l l o - o u t Enter C-x h M-w C-x C-f C-a C-k ~ / C S _ 3 5 L / k e y 1 . t x t Enter M-> C-y M-y
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n', b = '\\', q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn', b = '%c%c', q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+Exercise 1.6:
+1. C-x b * s c r a t c h * Enter
+2. ( r a n d o m ( " 1 0 5 - 0 3 2 - 3 7 8 " ) ) Enter C-j
+
+3. ( s e t q SP x SP ( r a n d o m ) ) Enter C-j
+
+   ( s e t q SP y SP ( r a n d o m ) ) Enter C-j
+
+4. ( * SP x SP y )
+   The answer is not mathematically correct, and the result is interpretation of the overflowed integer representing the product
+
+5. The answer returned is exactly the same:
+
+6. The random numbers while appearing random are not random in the true mathematical sense, rather they are pseudo-random numbers that are generated using a seed that is initialized when emacs is intialized. This seed is not random and hence the random numbers can never be truly random.
+
+7. The probability is approximately 1 - meaning that the multiplication has an extremely chance of being wrong.
+An approximation for the probability can be calculated by (2 * (2^31 - 2^30)/2^31)^2

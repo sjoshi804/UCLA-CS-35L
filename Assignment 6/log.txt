@@ -1,0 +1,44 @@
+1. Prepend /usr/local/cs/bin to path
+export PATH=/usr/local/cs/bin:$PATH
+
+2. od -An -t f4 -N 10000000 < /dev/urandom | tr -s ' ' '\n' > random.txt 
+Using man od to understand the od command and running through its list of options
+as well as the TA's slides.
+Removed leading newline manually using emacs
+
+3. Timing the sort command (with different arguments for its parallel option)
+
+time -p /usr/local/cs/bin/sort -g random.txt >/dev/null
+real 4.64
+user 24.59
+sys 0.11
+
+time -p /usr/local/cs/bin/sort -g --parallel=1 random.txt >/dev/null
+real 23.10
+user 23.05
+sys 0.04
+
+time -p /usr/local/cs/bin/sort -g --parallel=2 random.txt >/dev/null
+real 12.21
+user 23.14
+sys 0.07
+
+time -p /usr/local/cs/bin/sort -g --parallel=4 random.txt >/dev/null
+real 7.25
+user 24.34
+sys 0.09
+
+time -p /usr/local/cs/bin/sort -g --parallel=8 random.txt >/dev/null
+real 4.89
+user 25.03
+sys 0.12
+
+
+-- Observations -- 
+- sort seems to use the parallel=8 option by default (the times for the command with no parallel
+specified and parallel=8)
+- as the number of parellel threads increase, the real time decreases 
+- the user time is the measure of total time spent across all CPUs. Hence it in increases as the 
+number of parallel threads increase as it sums up the work done by all the CPUs with the additional
+overhead time for the thread creation
+

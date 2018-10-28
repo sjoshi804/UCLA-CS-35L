@@ -1,0 +1,532 @@
+1. 
+Looked up syntax for parsing arguments from the terminal call to the file for
+c programs.
+--> int main(int argc, char** argv) - where argc has the number of integers
+    		       	      	    - and argv has the actual arguments
+				    - also the program name counts as one argument
+
+First checked if input was valid, if not exited with code 1 and error message
+Then Transliterated
+
+Transliteration Steps:
+	1. Read input
+	2. If character read is in From, print the corresponding character from To
+	3. else print the character as is
+	4. Continue until EOF is hit (by step 1)
+
+2. touch tr2u.c
+cat tr2b.c > tr2u.c
+-- since most of the code is similar
+then swapped out the code for IO Parsing and IO error checking with code using 
+read and write instead. 
+used read and write with nbytes set to 1, hence using directly executing system calls
+
+Compiled with commands:
+gcc -std=c11 -g tr2b.c -o tr2b
+gcc -std=c11 -g tr2u.c -o tr2u
+
+Tested the above scripts with:
+./tr2b 'abc' 'def'
+abcd
+Returns defd
+
+./tr2u 'abc' 'def'
+Returns defd
+
+3. Using the strace command
+   
+   strace -c -o strace1.txt ./tr2b '?#' 'ab' < input.txt > tr2b.txt
+   strace -c -o strace2.txt ./tr2u '?#' 'ab' < input.txt > truu.txt
+   strace -c -o strace3.txt ./tr2b '?#' 'ab' < input.txt
+   strace -c -o strace4.txt ./tr2u '?#' 'ab' < input.txt
+
+   -c: generates a summary of the # and type of each system call
+   -o: copies the output into the file passed as an argument
+
+a. First command checks system calls made by t2b (buffered) - when copying output to a file
+613 read calls
+611 write calls
+1250 total system calls
+
+b. Second command checks system calls made by t2u (unbuffered) - when copying output to a file
+5000000 read calls
+5000002 write calls
+10000024 total system calls
+
+c. Third command checks system calls made by t2b (buffered) - when writing to terminal
+613 read calls
+19855 write calls
+20494 total system calls
+
+d. Fourth command checks system calls made by t2u (unbuffered) - when writing to terminal
+5000000 read calls
+5000002 write calls
+10000024 total system calls
+
+It is evident from the above data that the unbuffered program is extremely inefficient
+as doing the read and write calls manually results in far more than required (nearly 1 
+each per byte) and hence one would be better using the getchar() and putchar() for IO
+
+4. Testing the porgrams with the time command
+time cat input.txt | ./tr2b '?#' 'ab' > tr2b.txt
+Returns:
+real	0m0.209s
+user	0m0.156s
+sys	0m0.031s
+
+time cat input.txt | ./tr2u '?#' 'ab' > tr2u.txt
+Returns:
+real	0m9.608s
+user	0m1.280s
+sys	0m8.351s
+
+time cat input.txt | ./tr2b '?#' 'ab'
+Returns: transliterated output and
+real 0m1.170s
+user 0m0.208s
+sys  0m0.141s
+
+time cat input.txt | ./tr2u '?#' 'ab'
+Returns: transliterated output and
+real	   0m8.421s
+user	   0m1.373s
+sys	   0m7.083s
+
+This confirms the above conclusion that buffered IO is significantly more efficient than
+unbuffered IO. 
+
+1. Comparing sfrob and sfrobu with test data from assignment4
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrob
+real 	    0m0.002s
+user	    0m0.001s
+sys	    0m0.001s
+
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrobu
+real 	    0m0.002s
+user 	    0m0.000s
+sys  	    0m0.003s
+
+Comparing with data from input.txt (used for previous parts)
+time ./sfrob < input.txt
+real 	     0m0.011s
+user	     0m0.005s
+sys	     0m0.004s
+
+time ./sfrobu < input.txt
+real 	      0m6.393s
+user	      0m0.912s
+sys	      0m6.127s
+
+time cat input.txt | ./sfrobu
+real 	      0m9.105s
+user	      0m1.224s
+sys	      0m9.143s
+
+This again makes it evident that the unbufferd IO is way worse than buffered IO.
+The final command which makes the program read from stdIO, highlights this even more
+because the regular file no longer buffers the contents of the file for the script.
+Hence bufferedIO seems to always be better than unbufferedIO.
+
+#!/usr/local/cs/bin/bash
+
+frob="\52\53\50\51\56\57\54\55\42\43\40\41\46\47\44\45\72\73\70\71\76\77\74\75\62\63\60\
+\61\66\67\64\65\12\13\10\11\16\17\14\15\2\3\0\1\6\7\4\5\32\33\30\31\36\
+\37\34\35\22\23\20\21\26\27\24\25\152\153\\150\151\156\157\154\155\142\143\140\141\146\147\144\
+\145\172\173\170\171\176\177\174\175\162\163\160\161\166\167\164\165\112\113\110\111\116\117\114\115\102\
+\103\100\101\106\107\104\105\132\133\130\131\136\137\134\135\122\123\120\121\126\127\124\125\252\253\250\
+\251\256\257\254\255\242\243\240\241\246\247\244\245\272\273\270\271\276\277\274\275\262\263\260\261\266\
+\267\264\265\212\213\210\211\216\217\214\215\202\203\200\201\206\207\204\205\232\233\230\231\236\237\234\
+\235\222\223\220\221\226\227\224\225\352\353\350\351\356\357\354\355\342\343\340\341\346\347\344\345\372\
+\373\370\371\376\377\374\375\362\363\360\361\366\367\364\365\312\313\310\311\316\317\314\315\302\303\300\
+\301\306\307\304\305\332\333\330\331\336\337\334\335\322\323\320\321\326\327\324\325"
+
+unfrob="\0\1\2\3\4\5\6\7\10\11\12\13\14\15\\16\17\20\21\22\23\24\25\26\27\30\31\32\
+\33\34\35\36\37\40\41\42\43\44\45\46\47\50\51\52\53\54\55\56\57\60\61\62\63\64\
+\65\66\67\70\71\72\73\74\75\76\77\100\101\\102\103\104\105\106\107\110\111\112\113\114\115\116\
+\117\120\121\122\123\124\125\126\127\130\131\132\133\134\135\136\137\140\141\142\143\144\145\146\147\150\
+\151\152\153\154\155\156\157\160\161\162\163\164\165\166\167\170\171\172\173\174\175\176\177\200\201\202\
+\203\204\205\206\207\210\211\212\213\214\215\216\217\220\221\222\223\224\225\226\227\230\231\232\233\234\
+\235\236\237\240\241\242\243\244\245\246\247\250\251\252\253\254\255\256\257\260\261\262\263\264\265\266\
+\267\270\271\272\273\274\275\276\277\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\
+\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337\340\341\342\343\344\345\346\347\350\351\352\
+\353\354\355\356\357\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377"
+
+tr "$frob" "$unfrob" | sort | tr "$unfrob" "$frob"#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+char memFrobByte (const char current)
+{
+  return (current ^ 42);
+}
+
+int frobcmp (char const* first, char const* second)
+{
+  while (1)
+    {
+      //Null bytes need to be skipped but are accepted as valid
+      while (*first == '\0')
+	first++;
+      while (*second == '\0')
+	second++;
+
+      if (*first == ' ' && *second == ' ')
+	// Both words ended, must be equal hence return 0
+	return 0;
+
+      if (*first == ' ' || memFrobByte(*first) < memFrobByte (*second))
+	return -1;
+
+      if (*second == ' ' || memFrobByte(*first) > memFrobByte(*second))
+	return 1;
+
+      first++; second++;
+    }
+}
+
+int universalfrobcmp(const void* wordA, const void* wordB)
+{
+  //Typecast pointers for the qsort function
+  const char* word1 = *(const char**)wordA;
+  const char* word2 = *(const char**)wordB;
+  return frobcmp(word1, word2);
+}
+
+
+
+int main (int argc, char** argv)
+{
+  //Default is set to 0
+  int flag_optf = 0;
+  
+  if (argc > 2)
+    {
+      fprintf(stderr, "Too many options");
+      exit(1);
+    }
+
+  //Pointer to the first element of a string
+  char* currentWord = NULL;
+  //Pointer to multiple string pointers like the one above
+  char** text = NULL;
+  
+
+  const char* options = argv[1];
+  const char* option_f = "-f";
+  
+  if (argc == 2 && strcmp (options, option_f) != 0)
+    {
+      fprintf(stderr, "Only option -f allowed");
+      exit(1);
+    }
+  else if (argc == 2 && strcmp(options, option_f) == 0)
+    {
+      flag_optf = 1;
+    }
+  
+  struct stat data;
+  if (fstat(0, &data) < 0)
+    {
+      fprintf(stderr, "Error in fstat.");
+      exit(1);
+    }
+
+  char* buffer;
+  int counter = 0;
+  int maxSize = 0;
+  
+  if (S_ISREG(data.st_mode))
+    {
+      buffer = (char*)malloc(data.st_size * sizeof(char));
+      if (buffer == NULL)
+	{
+	  fprintf(stderr, "Memory allocation error");
+	  exit(1);
+	}
+
+      if (read(0, buffer, data.st_size) < 0)
+	{
+	  fprintf(stderr, "Read error");
+	  exit(1);
+	}
+
+      maxSize = data.st_size;
+    }
+
+
+  int numChars = 0;
+  int numWords = 0;
+  
+  currentWord = (char*) malloc (sizeof(char)); 
+  
+  if (currentWord == NULL)
+  {
+    //Memory not allocated successfully hence program must exit indicating
+    //this error
+    fprintf(stderr, "memory allocation unsuccessful. exiting \n");
+    exit (1);
+  }
+
+  currentWord[numChars] = getchar();
+  
+  if (ferror(stdin))
+  {
+
+   }
+  
+  ssize_t IOStatus;
+  if (counter >= maxSize)
+    {
+      IOStatus = read(0, (currentWord), 1);
+      if (IOStatus < 0)
+	{
+	  //Exit program
+	  fprintf(stderr, "I/O error. exiting \n");
+	  free(currentWord);
+	  exit(1);
+	}
+    }
+  else
+    {
+      currentWord[numChars] = buffer[counter++];
+      IOStatus = 1;
+    }
+ 
+
+  while (IOStatus > 0)
+  {
+    //next character
+    char nextChar;
+    
+    if (counter >= maxSize)
+    {
+      IOStatus = read(0, &(nextChar), 1);
+      if (IOStatus < 0)
+	{
+	  //Exit program
+	  fprintf(stderr, "I/O error. exiting \n");
+	  free(currentWord);
+	  for (int i = 0; i < numWords; i++)
+	    free(text[i]);
+	  free(text);
+	  exit(1);
+	}
+    }
+
+    else
+      {
+	nextChar = buffer[counter++];
+      }
+
+
+    if (currentWord[numChars] == ' ') //New word starting
+    {
+      //Allocate memory for numWords + 1 for the new word
+      char** temp_ptr = realloc (text, (numWords + 1) * sizeof(char*));
+      if (temp_ptr == NULL)
+      {
+	//Memory allocation unsuccesful
+	//Exit program
+	fprintf(stderr,"memory allocation unsuccessful. exiting \n");
+	free(currentWord);
+	for (int i = 0; i < numWords; i++)
+	  free(text[i]);
+	free(text);
+	exit(1);
+      }
+      
+      text = temp_ptr;
+      text[numWords] = currentWord;
+      numWords++;
+      numChars = -1; //So that later ++ makes it 0 again
+      currentWord = (char*) malloc (sizeof(char));
+      if (IOStatus == 0)
+	//Execution completed, break out of loop and exit normally
+	break;
+      
+      while (nextChar == ' ')
+      {
+	if (counter >= maxSize)
+	  {
+	    IOStatus = read(0, &(nextChar), 1);
+	    if (IOStatus < 0)
+	      {
+		//Exit program
+		fprintf(stderr, "I/O error. exiting \n");
+		free(currentWord);
+		for (int i = 0; i < numWords; i++)
+		  free(text[i]);
+		free(text);
+		exit(1);
+	      }
+	  }
+	else
+	  {
+	    nextChar = buffer[counter++];
+	  }
+      }
+    }
+    else if (IOStatus == 0)
+      {
+	nextChar = ' ';
+	IOStatus = 1;
+      }
+
+    numChars++;
+    char* temp_str_ptr = realloc (currentWord, (numChars + 1) * sizeof(char));
+    
+    if (temp_str_ptr == NULL)
+    {
+      //Memory allocation unsuccesful                                                              
+      //Exit program                                                                               
+      fprintf(stderr,"memory allocation unsuccessful. exiting \n");
+      free(currentWord);
+      for (int i = 0; i < numWords; i++)
+	free(text[i]);
+      free(text);
+      exit(1);
+    }
+    
+    currentWord = temp_str_ptr;
+    currentWord[numChars] = nextChar;
+    
+  }
+
+  qsort(text, numWords, sizeof(char*), universalfrobcmp);
+  
+  //Print sorted list
+  for (size_t i = 0; i < numWords; i++)
+  {
+    for (size_t j = 0; text[i][j] != ' '; j++)
+      write(1, &text[i][j], 1);
+    write(1, " ", 1);
+  }
+  
+  //Free all memory
+  for (size_t i = 0; i < numWords; i++)
+    free(text[i]);
+  free(text);
+  free(currentWord);
+  
+  return 0;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main (int argc, char** argv)
+{
+  //CHECKING FOR CORRECT NUMBER OF ARGUMENTS
+  if (argc != 3)
+    {
+      fprintf(stderr, "Please provide exactly 2 arguments. \n");
+      exit(1);
+    }
+
+
+  char* from = argv[1];
+  char* to = argv[2];
+
+  //CHECKING FOR EQUAL LENGTH
+  if (strlen(from) != strlen(to))
+    {
+      fprintf(stderr, "Please provide arguments of equal length. \n");
+      exit(1);
+    }
+
+  //CHECKING FOR DUPLICATES
+  for (size_t i = 0; i < strlen(from); i++)
+    {
+      for (size_t j = i + 1; j < strlen(from); j++)
+	{
+	  if (from[j] == from[i])
+	    {
+	      fprintf(stderr, "Please do not provide duplicate bytes in from argument. \n");
+	      exit(1);
+	    }
+	}
+    }
+
+  //TRANSLITERATING BYTES
+  int currentChar = getchar();
+   
+   while (currentChar != EOF)
+     {
+       for (size_t i = 0; i < strlen(from); i++)
+	 {
+	   if (currentChar == from[i])
+	     {
+	       currentChar = to[i];
+	       break;
+	     }
+	 }
+       
+       putchar(currentChar);
+       currentChar = getchar();
+     }
+
+  return 0;  
+}
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int main (int argc, char** argv)
+{
+  //CHECKING FOR CORRECT NUMBER OF ARGUMENTS
+  if (argc != 3)
+    {
+      fprintf(stderr, "Please provide exactly 2 arguments. \n");
+      exit(1);
+    }
+
+
+  char* from = argv[1];
+  char* to = argv[2];
+
+  //CHECKING FOR EQUAL LENGTH
+  if (strlen(from) != strlen(to))
+    {
+      fprintf(stderr, "Please provide arguments of equal length. \n");
+      exit(1);
+    }
+
+  //CHECKING FOR DUPLICATES
+  for (size_t i = 0; i < strlen(from); i++)
+    {
+      for (size_t j = i + 1; j < strlen(from); j++)
+	{
+	  if (from[j] == from[i])
+	    {
+	      fprintf(stderr, "Please do not provide duplicate bytes in from argument \n");
+	      exit(1);
+	    }
+	}
+    }
+
+  //TRANSLITERATING BYTES
+  char currentChar[1];
+  ssize_t io_success = read(0, currentChar, 1);
+
+  while (io_success > 0)
+     {
+       for (size_t i = 0; i < strlen(from); i++)
+	 {
+	   if (currentChar[0] == from[i])
+	     {
+	       currentChar[0] = to[i];
+	       break;
+	     }
+	 }
+       
+       write(1, currentChar, 1);
+       io_success = read(0, currentChar, 1);
+     }
+
+  return 0;  
+}

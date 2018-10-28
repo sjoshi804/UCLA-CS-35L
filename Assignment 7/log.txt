@@ -1,0 +1,38 @@
+Name: Siddharth Joshi (105032378)
+LabPartner: Arnav Garg (304911796)
+
+1. Setting up the beagle bon
+Using instructions from Piazza
+
+2. Installing ssh software
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+
+3. Setting up server (from TA slides)
+
+   - Creating a user
+   sudo useradd -d /home/arnav -m arnav
+   sudo passwd arnav
+   
+   - Giving access to ssh into my beaglebone
+   cd /home/arnav
+   sudo mkdir .ssh
+   sudo chown -R arnav .ssh
+   sudo chmod 700 .ssh
+
+Since Arnav was not able to ssh into my beaglebone, despite being able to ping it
+we assumed there was an issue with the firewall protection, and hence to 
+circumvent this, we used a hotspot from my phone. And repeated the client-side ssh
+step after logging in to this wifi. 
+
+4. Client Side steps (From TA slides)
+   
+   ssh-keygen rsa 
+   ssh-copy-id -i sid@192.168.43.211 // Copying public key onto Arnav's beaglebone
+   eval "$(ssh-agent -s)" 	     // Enables ssh-agent
+   ssh-add 	     	  	     // Add private key to ssh-agent
+   ssh sid@192.168.43.211
+  
+   Doesn't ask for password, hence succesfully able to ssh without a password
+   henceforth. 
+   

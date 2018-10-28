@@ -1,0 +1,15 @@
+ImageNet Classification with Deep Convolutional Neural Networks
+
+Early approaches - statistical learning techniques - SVMs 
+      		 - trained to maxmiise correctness not how many data sets they are correct
+
+AlexNet - nearly halved the rate 
+	- more layers
+
+Deep Neural Networks - mathematical models to accomplish tasks easy for humans hard for 
+     	    	     - mimic human neural networks
+
+How Networks Train: data points structured 
+    	     	    MSE - mean squared error
+
+AlexNEt - Stochastic Gradient DEscent with Nesterov Momentum

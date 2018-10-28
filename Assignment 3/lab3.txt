@@ -1,0 +1,769 @@
+f1.
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+- Downloads coreutils tar file
+tar -xJvf coreutils-8.29.tar.xz
+- Unzips the tar file into current directory
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+- Downloads signature and keyring
+whatis verify
+man verify
+- Understand verify
+--verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+Verifies certificate
+Warning: "This key is not certified with a trusted signature!"
+"There is no indication that the signature belongs to
+the owner." This is because there is no way to verify if the public key
+does belong to the individual. If this needs to be changed, you can
+sign it with your private key, so that the key is now trusted to you.
+
+2.
+mkdir assignment4
+- New directory to install coreutils
+cd coreutils-8.29
+emacs INSTALL
+- Understand how to set prefix to install in specific directory
+./configure --prefix=/u/cs/ugrad/siddharj/35L/assignment4/
+make
+make install
+
+3.
+cd assignment4/bin
+- Enter folder with executables for all the commands
+- Ran the executables: ./ls -a, ./ls -A, ./ls -a -A and ./ls -A
+- to reproduce the bug
+
+4.
+cd coreutils-8.29
+nano patch
+Paste the patch file text from the website.
+patch -p1 < patchfile
+- Patches issues in these files: ls.c, local.mk and a-option.sh
+
+5.
+autoreconf --force
+- Running make without running this first was giving an error
+- claiming that automate versions didn't match probably because
+- the system version was to old
+- this command forcefully remakes all the files eliminating this
+- mismatch error
+
+6. make
+- Recompiles code (with bug fix)
+- Runs a command called "make all-recursive" that recurses through
+- all directories
+- Looking for files that have been changed and recompiles those files
+- CC: indicates c file --> object file
+- ls.o is compiled as ls.c is changed
+ cd . && /bin/sh /u/cs/ugrad/siddharj/35L/coreutils-8.29/
+    build-aux/missing automake-1.13 --gnu Makefile
+ cd . && /bin/sh ./config.status Makefile depfiles
+config.status: creating Makefile
+
+  CCLD     src/base32
+  CC       src/basename.o
+  CCLD     src/basename
+  CC       src/cat.o
+  CCLD     src/cat
+  CC       src/chcon.o
+  CCLD     src/chcon
+  CC       src/chgrp.o
+  CC       src/chown-core.o
+  CCLD     src/chgrp
+  CC       src/chmod.o
+  CCLD     src/chmod
+  CC       src/chown.o
+  CCLD     src/chown
+  CC       src/cksum.o
+  CCLD     src/cksum
+  CC       src/comm.o
+  CCLD     src/comm
+  CC       src/cp.o
+  CC       src/copy.o
+  CC       src/cp-hash.o
+  CC       src/extent-scan.o
+  CC       src/force-link.o
+  CC       src/selinux.o
+  CCLD     src/cp
+  CC       src/csplit.o
+  CCLD     src/csplit
+  CC       src/cut.o
+  CC       src/set-fields.o
+  CCLD     src/cut
+  CC       src/date.o
+  CCLD     src/date
+  CC       src/dd.o
+  CCLD     src/dd
+  CC       src/ls.o
+  CCLD     src/dir
+  CC       src/dircolors.o
+  CCLD     src/dircolors
+  CC       src/dirname.o
+  CCLD     src/dirname
+  CC       src/du.o
+  CCLD     src/du
+  CC       src/echo.o
+  CCLD     src/echo
+  CC       src/env.o
+  CCLD     src/env
+  CC       src/expand.o
+  CC       src/expand-common.o
+  CCLD     src/expand
+  CC       src/expr.o
+  CCLD     src/expr
+  CC       src/factor.o
+  CCLD     src/factor
+  CC       src/false.o
+  CCLD     src/false
+  CC       src/fmt.o
+  CCLD     src/fmt
+  CC       src/fold.o
+  CCLD     src/fold
+  CC       src/src_ginstall-install.o
+  CC       src/src_ginstall-prog-fprintf.o
+  CC       src/src_ginstall-copy.o
+  CC       src/src_ginstall-cp-hash.o
+  CC       src/src_ginstall-extent-scan.o
+  CC       src/src_ginstall-force-link.o
+  CC       src/src_ginstall-selinux.o
+  CCLD     src/ginstall
+  CC       src/groups.o
+  CC       src/group-list.o
+  CCLD     src/groups
+  CC       src/head.o
+  CCLD     src/head
+  CC       src/id.o
+  CCLD     src/id
+  CC       src/join.o
+  CCLD     src/join
+  CC       src/kill.o
+  CCLD     src/kill
+  CC       src/link.o
+  CCLD     src/link
+  CC       src/ln.o
+  CC       src/relpath.o
+  CCLD     src/ln
+  CC       src/logname.o
+  CCLD     src/logname
+  CCLD     src/ls
+  CC       src/src_md5sum-md5sum.o
+  CCLD     src/md5sum
+  CC       src/mkdir.o
+  CC       src/prog-fprintf.o
+  CCLD     src/mkdir
+  CC       src/mkfifo.o
+  CCLD     src/mkfifo
+  CC       src/mknod.o
+  CCLD     src/mknod
+  CC       src/mktemp.o
+  CCLD     src/mktemp
+  CC       src/mv.o
+  CC       src/remove.o
+  CCLD     src/mv
+  CC       src/nl.o
+  CCLD     src/nl
+  CC       src/nproc.o
+  CCLD     src/nproc
+  CC       src/nohup.o
+  CCLD     src/nohup
+  CC       src/numfmt.o
+  CCLD     src/numfmt
+  CC       src/od.o
+  CCLD     src/od
+  CC       src/paste.o
+  CCLD     src/paste
+  CC       src/pathchk.o
+  CCLD     src/pathchk
+  CC       src/pr.o
+  CCLD     src/pr
+  CC       src/printenv.o
+  CCLD     src/printenv
+  CC       src/printf.o
+  CCLD     src/printf
+  CC       src/ptx.o
+  CCLD     src/ptx
+  CC       src/pwd.o
+  CCLD     src/pwd
+  CC       src/readlink.o
+  CCLD     src/readlink
+  CC       src/realpath.o
+  CCLD     src/realpath
+  CC       src/rm.o
+  CCLD     src/rm
+  CC       src/rmdir.o
+  CCLD     src/rmdir
+  CC       src/runcon.o
+  CCLD     src/runcon
+  CC       src/seq.o
+  CCLD     src/seq
+  CC       src/src_sha1sum-md5sum.o
+  CCLD     src/sha1sum
+  CC       src/src_sha224sum-md5sum.o
+  CCLD     src/sha224sum
+  CC       src/src_sha256sum-md5sum.o
+  CCLD     src/sha256sum
+  CC       src/src_sha384sum-md5sum.o
+  CCLD     src/sha384sum
+  CC       src/src_sha512sum-md5sum.o
+  CCLD     src/sha512sum
+  CC       src/shred.o
+  CCLD     src/shred
+  CC       src/shuf.o
+  CCLD     src/shuf
+  CC       src/sleep.o
+  CCLD     src/sleep
+  CC       src/sort.o
+  CCLD     src/sort
+  CC       src/split.o
+  CCLD     src/split
+  CC       src/stat.o
+  CCLD     src/stat
+  CC       src/sum.o
+  CCLD     src/sum
+  CC       src/sync.o
+  CCLD     src/sync
+  CC       src/tac.o
+  CCLD     src/tac
+  CC       src/tail.o
+  CCLD     src/tail
+  CC       src/tee.o
+  CCLD     src/tee
+  CC       src/test.o
+  CCLD     src/test
+  CC       src/touch.o
+  CCLD     src/touch
+  CC       src/tr.o
+  CCLD     src/tr
+  CC       src/true.o
+  CCLD     src/true
+  CC       src/truncate.o
+  CCLD     src/truncate
+  CC       src/tsort.o
+  CCLD     src/tsort
+  CC       src/tty.o
+  CCLD     src/tty
+  CC       src/uname.o
+  CCLD     src/uname
+  CC       src/unexpand.o
+  CCLD     src/unexpand
+  CC       src/uniq.o
+  CCLD     src/uniq
+  CC       src/unlink.o
+  CCLD     src/unlink
+  CCLD     src/vdir
+  CC       src/wc.o
+  CCLD     src/wc
+  CC       src/whoami.o
+  CCLD     src/whoami
+  CC       src/yes.o
+  CCLD     src/yes
+  CC       src/getlimits.o
+  CCLD     src/getlimits
+  CC       src/src_libstdbuf_so-libstdbuf.o
+  CCLD     src/libstdbuf.so
+  GEN      man/chroot.1
+  GEN      man/hostid.1
+  GEN      man/timeout.1
+  GEN      man/nice.1
+  GEN      man/who.1
+  GEN      man/users.1
+  GEN      man/pinky.1
+  GEN      man/uptime.1
+  GEN      man/stty.1
+  GEN      man/df.1
+  GEN      man/stdbuf.1
+  GEN      man/b2sum.1
+  GEN      man/base64.1
+  GEN      man/base32.1
+  GEN      man/basename.1
+  GEN      man/cat.1
+  GEN      man/chcon.1
+  GEN      man/chgrp.1
+  GEN      man/chmod.1
+  GEN      man/chown.1
+  GEN      man/cksum.1
+  GEN      man/comm.1
+  GEN      man/cp.1
+  GEN      man/csplit.1
+  GEN      man/cut.1
+  GEN      man/date.1
+  GEN      man/dd.1
+  GEN      man/dir.1
+  GEN      man/dircolors.1
+  GEN      man/dirname.1
+  GEN      man/du.1
+  GEN      man/echo.1
+  GEN      man/env.1
+  GEN      man/expand.1
+  GEN      man/expr.1
+  GEN      man/factor.1
+  GEN      man/false.1
+  GEN      man/fmt.1
+  GEN      man/fold.1
+  GEN      man/install.1
+  GEN      man/groups.1
+  GEN      man/head.1
+  GEN      man/id.1
+  GEN      man/join.1
+  GEN      man/kill.1
+  GEN      man/link.1
+  GEN      man/ln.1
+  GEN      man/logname.1
+  GEN      man/ls.1
+  GEN      man/md5sum.1
+  GEN      man/mkdir.1
+  GEN      man/mkfifo.1
+  GEN      man/mknod.1
+  GEN      man/mktemp.1
+  GEN      man/mv.1
+  GEN      man/nl.1
+  GEN      man/nproc.1
+  GEN      man/nohup.1
+  GEN      man/numfmt.1
+  GEN      man/od.1
+  GEN      man/paste.1
+  GEN      man/pathchk.1
+  GEN      man/pr.1
+  GEN      man/printenv.1
+  GEN      man/printf.1
+  GEN      man/ptx.1
+  GEN      man/pwd.1
+  GEN      man/readlink.1
+  GEN      man/realpath.1
+  GEN      man/rm.1
+  GEN      man/rmdir.1
+  GEN      man/runcon.1
+  GEN      man/seq.1
+  GEN      man/sha1sum.1
+  GEN      man/sha224sum.1
+  GEN      man/sha256sum.1
+  GEN      man/sha384sum.1
+  GEN      man/sha512sum.1
+  GEN      man/shred.1
+  GEN      man/shuf.1
+  GEN      man/sleep.1
+  GEN      man/sort.1
+  GEN      man/split.1
+  GEN      man/stat.1
+  GEN      man/sum.1
+  GEN      man/sync.1
+  GEN      man/tac.1
+  GEN      man/tail.1
+  GEN      man/tee.1
+  GEN      man/test.1
+  GEN      man/touch.1
+  GEN      man/tr.1
+  GEN      man/true.1
+  GEN      man/truncate.1
+  GEN      man/tsort.1
+  GEN      man/tty.1
+  GEN      man/uname.1
+  GEN      man/unexpand.1
+  GEN      man/uniq.1
+  GEN      man/unlink.1
+  GEN      man/vdir.1
+  GEN      man/wc.1
+  GEN      man/whoami.1
+  GEN      man/yes.1
+make[2]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L/
+coreutils-8.29'
+Making all in gnulib-tests
+make[2]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/gnulib-tests'
+Making all in .
+make[4]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/gnulib-tests'
+make[4]: Nothing to be done for `all-am'.
+make[4]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L
+	 /coreutils-8.29/gnulib-tests'
+make[3]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/gnulib-tests'
+make[2]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/gnulib-tests'
+make[1]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29'
+
+ cd . && /bin/sh /u/cs/ugrad/siddharj/35L/coreutils-8.29/
+    build-aux/missing automake-1.13 --gnu Makefile
+ cd . && /bin/sh ./config.status Makefile depfiles
+config.status: creating Makefile
+config.status: executing depfiles commands
+  GEN      lib/configmake.h
+  GEN      src/coreutils.h
+  GEN      src/version.c
+  GEN      src/version.h
+make  all-recursive
+make[1]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29'
+Making all in po
+make[2]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/po'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29/po'
+Making all in .
+make[2]: Entering directory `/w/home.15/cs/ugrad/siddharj/35L/
+	 coreutils-8.29'	
+  CC       lib/localcharset.o
+  AR       lib/libcoreutils.a
+  CC       src/version.o
+  AR       src/libver.a
+  CC       src/chroot.o
+  CCLD     src/chroot
+  CC       src/hostid.o
+  CCLD     src/hostid
+  CC       src/timeout.o
+  CC       src/operand2sig.o
+  CCLD     src/timeout
+  CC       src/nice.o
+  CCLD     src/nice
+  CC       src/who.o
+  CCLD     src/who
+  CC       src/users.o
+  CCLD     src/users
+  CC       src/pinky.o
+  CCLD     src/pinky
+  CC       src/uptime.o
+  CCLD     src/uptime
+  CC       src/stty.o
+  CCLD     src/stty
+  CC       src/df.o
+  CC       src/find-mount-point.o
+  CCLD     src/df
+  CC       src/stdbuf.o
+  CCLD     src/stdbuf
+  CC       src/lbracket.o
+  CCLD     src/[
+  CC       src/src_b2sum-md5sum.o
+  CCLD     src/b2sum
+  CC       src/src_base64-base64.o
+  CCLD     src/base64
+  CC       src/src_base32-base64.o
+  CCLD     src/base32
+  CC       src/basename.o
+  CCLD     src/basename
+  CC       src/cat.o
+  CCLD     src/cat
+  CC       src/chcon.o
+  CCLD     src/chcon
+  CC       src/chgrp.o
+  CC       src/chown-core.o
+  CCLD     src/chgrp
+  CC       src/chmod.o
+  CCLD     src/chmod
+  CC       src/chown.o
+  CCLD     src/chown
+  CC       src/cksum.o
+  CCLD     src/cksum
+  CC       src/comm.o
+  CCLD     src/comm
+  CC       src/cp.o
+  CC       src/copy.o
+  CC       src/cp-hash.o
+  CC       src/extent-scan.o
+  CC       src/force-link.o
+  CC       src/selinux.o
+  CCLD     src/cp
+  CC       src/csplit.o
+  CCLD     src/csplit
+  CC       src/cut.o
+  CC       src/set-fields.o
+  CCLD     src/cut
+  CC       src/date.o
+  CCLD     src/date
+  CC       src/dd.o
+  CCLD     src/dd
+  CC       src/ls.o
+  CCLD     src/dir
+  CC       src/dircolors.o
+  CCLD     src/dircolors
+  CC       src/dirname.o
+  CCLD     src/dirname
+  CC       src/du.o
+  CCLD     src/du
+  CC       src/echo.o
+  CCLD     src/echo
+  CC       src/env.o
+  CCLD     src/env
+  CC       src/expand.o
+  CC       src/expand-common.o
+  CCLD     src/expand
+  CC       src/expr.o
+  CCLD     src/expr
+  CC       src/factor.o
+  CCLD     src/factor
+  CC       src/false.o
+  CCLD     src/false
+  CC       src/fmt.o
+  CCLD     src/fmt
+  CC       src/fold.o
+  CCLD     src/fold
+  CC       src/src_ginstall-install.o
+  CC       src/src_ginstall-prog-fprintf.o
+  CC       src/src_ginstall-copy.o
+  CC       src/src_ginstall-cp-hash.o
+  CC       src/src_ginstall-extent-scan.o
+  CC       src/src_ginstall-force-link.o
+  CC       src/src_ginstall-selinux.o
+  CCLD     src/ginstall
+  CC       src/groups.o
+  CC       src/group-list.o
+  CCLD     src/groups
+  CC       src/head.o
+  CCLD     src/head
+  CC       src/id.o
+  CCLD     src/id
+  CC       src/join.o
+  CCLD     src/join
+  CC       src/kill.o
+  CCLD     src/kill
+  CC       src/link.o
+  CCLD     src/link
+  CC       src/ln.o
+  CC       src/relpath.o
+  CCLD     src/ln
+  CC       src/logname.o
+  CCLD     src/logname
+  CCLD     src/ls
+  CC       src/src_md5sum-md5sum.o
+  CCLD     src/md5sum
+  CC       src/mkdir.o
+  CC       src/prog-fprintf.o
+  CCLD     src/mkdir
+  CC       src/mkfifo.o
+  CCLD     src/mkfifo
+  CC       src/mknod.o
+  CCLD     src/mknod
+  CC       src/mktemp.o
+  CCLD     src/mktemp
+  CC       src/mv.o
+  CC       src/remove.o
+  CCLD     src/mv
+  CC       src/nl.o
+  CCLD     src/nl
+  CC       src/nproc.o
+  CCLD     src/nproc
+  CC       src/nohup.o
+  CCLD     src/nohup
+  CC       src/numfmt.o
+  CCLD     src/numfmt
+  CC       src/od.o
+  CCLD     src/od
+  CC       src/paste.o
+  CCLD     src/paste
+  CC       src/pathchk.o
+  CCLD     src/pathchk
+  CC       src/pr.o
+  CCLD     src/pr
+  CC       src/printenv.o
+  CCLD     src/printenv
+  CC       src/printf.o
+  CCLD     src/printf
+  CC       src/ptx.o
+  CCLD     src/ptx
+  CC       src/pwd.o
+  CCLD     src/pwd
+  CC       src/readlink.o
+  CCLD     src/readlink
+  CC       src/realpath.o
+  CCLD     src/realpath
+  CC       src/rm.o
+  CCLD     src/rm
+  CC       src/rmdir.o
+  CCLD     src/rmdir
+  CC       src/runcon.o
+  CCLD     src/runcon
+  CC       src/seq.o
+  CCLD     src/seq
+  CC       src/src_sha1sum-md5sum.o
+  CCLD     src/sha1sum
+  CC       src/src_sha224sum-md5sum.o
+  CCLD     src/sha224sum
+  CC       src/src_sha256sum-md5sum.o
+  CCLD     src/sha256sum
+  CC       src/src_sha384sum-md5sum.o
+  CCLD     src/sha384sum
+  CC       src/src_sha512sum-md5sum.o
+  CCLD     src/sha512sum
+  CC       src/shred.o
+  CCLD     src/shred
+  CC       src/shuf.o
+  CCLD     src/shuf
+  CC       src/sleep.o
+  CCLD     src/sleep
+  CC       src/sort.o
+  CCLD     src/sort
+  CC       src/split.o
+  CCLD     src/split
+  CC       src/stat.o
+  CCLD     src/stat
+  CC       src/sum.o
+  CCLD     src/sum
+  CC       src/sync.o
+  CCLD     src/sync
+  CC       src/tac.o
+  CCLD     src/tac
+  CC       src/tail.o
+  CCLD     src/tail
+  CC       src/tee.o
+  CCLD     src/tee
+  CC       src/test.o
+  CCLD     src/test
+  CC       src/touch.o
+  CCLD     src/touch
+  CC       src/tr.o
+  CCLD     src/tr
+  CC       src/true.o
+  CCLD     src/true
+  CC       src/truncate.o
+  CCLD     src/truncate
+  CC       src/tsort.o
+  CCLD     src/tsort
+  CC       src/tty.o
+  CCLD     src/tty
+  CC       src/uname.o
+  CCLD     src/uname
+  CC       src/unexpand.o
+  CCLD     src/unexpand
+  CC       src/uniq.o
+  CCLD     src/uniq
+  CC       src/unlink.o
+  CCLD     src/unlink
+  CCLD     src/vdir
+  CC       src/wc.o
+  CCLD     src/wc
+  CC       src/whoami.o
+  CCLD     src/whoami
+  CC       src/yes.o
+  CCLD     src/yes
+  CC       src/getlimits.o
+  CCLD     src/getlimits
+  CC       src/src_libstdbuf_so-libstdbuf.o
+  CCLD     src/libstdbuf.so
+  GEN      man/chroot.1
+  GEN      man/hostid.1
+  GEN      man/timeout.1
+  GEN      man/nice.1
+  GEN      man/who.1
+  GEN      man/users.1
+  GEN      man/pinky.1
+  GEN      man/uptime.1
+  GEN      man/stty.1
+  GEN      man/df.1
+  GEN      man/stdbuf.1
+  GEN      man/b2sum.1
+  GEN      man/base64.1
+  GEN      man/base32.1
+  GEN      man/basename.1
+  GEN      man/cat.1
+  GEN      man/chcon.1
+  GEN      man/chgrp.1
+  GEN      man/chmod.1
+  GEN      man/chown.1
+  GEN      man/cksum.1
+  GEN      man/comm.1
+  GEN      man/cp.1
+  GEN      man/csplit.1
+  GEN      man/cut.1
+  GEN      man/date.1
+  GEN      man/dd.1
+  GEN      man/dir.1
+  GEN      man/dircolors.1
+  GEN      man/dirname.1
+  GEN      man/du.1
+  GEN      man/echo.1
+  GEN      man/env.1
+  GEN      man/expand.1
+  GEN      man/expr.1
+  GEN      man/factor.1
+  GEN      man/false.1
+  GEN      man/fmt.1
+  GEN      man/fold.1
+  GEN      man/install.1
+  GEN      man/groups.1
+  GEN      man/head.1
+  GEN      man/id.1
+  GEN      man/join.1
+  GEN      man/kill.1
+  GEN      man/link.1
+  GEN      man/ln.1
+  GEN      man/logname.1
+  GEN      man/ls.1
+  GEN      man/md5sum.1
+  GEN      man/mkdir.1
+  GEN      man/mkfifo.1
+  GEN      man/mknod.1
+  GEN      man/mktemp.1
+  GEN      man/mv.1
+  GEN      man/nl.1
+  GEN      man/nproc.1
+  GEN      man/nohup.1
+  GEN      man/numfmt.1
+  GEN      man/od.1
+  GEN      man/paste.1
+  GEN      man/pathchk.1
+  GEN      man/pr.1
+  GEN      man/printenv.1
+  GEN      man/printf.1
+  GEN      man/ptx.1
+  GEN      man/pwd.1
+  GEN      man/readlink.1
+  GEN      man/realpath.1
+  GEN      man/rm.1
+  GEN      man/rmdir.1
+  GEN      man/runcon.1
+  GEN      man/seq.1
+  GEN      man/sha1sum.1
+  GEN      man/sha224sum.1
+  GEN      man/sha256sum.1
+  GEN      man/sha384sum.1
+  GEN      man/sha512sum.1
+  GEN      man/shred.1
+  GEN      man/shuf.1
+  GEN      man/sleep.1
+  GEN      man/sort.1
+  GEN      man/split.1
+  GEN      man/stat.1
+  GEN      man/sum.1
+  GEN      man/sync.1
+  GEN      man/tac.1
+  GEN      man/tail.1
+  GEN      man/tee.1
+  GEN      man/test.1
+  GEN      man/touch.1
+  GEN      man/tr.1
+  GEN      man/true.1
+  GEN      man/truncate.1
+  GEN      man/tsort.1
+  GEN      man/tty.1
+  GEN      man/uname.1
+  GEN      man/unexpand.1
+  GEN      man/uniq.1
+  GEN      man/unlink.1
+  GEN      man/vdir.1
+  GEN      man/wc.1
+  GEN      man/whoami.1
+  GEN      man/yes.1
+make[2]: Leaving directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29'
+Making all in gnulib-tests
+make[2]: Entering directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+Making all in .
+make[4]: Entering directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+make[4]: Nothing to be done for `all-am'.
+make[4]: Leaving directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+make[3]: Leaving directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+make[2]: Leaving directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutils-8.29/gnulib-tests'
+make[1]: Leaving directory `/w/home.15/cs/ugrad/siddharj/
+	 35L/coreutil

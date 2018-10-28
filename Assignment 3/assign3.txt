@@ -1,0 +1,100 @@
+1.
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+- Downloads coreutils tar file
+tar -xJvf coreutils-8.29.tar.xz
+- Unzips the tar file into current directory
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+- Downloads signature and keyring
+whatis verify
+man verify
+- Understand verify
+--verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+Verifies certificate
+Warning: "This key is not certified with a trusted signature!"
+"There is no indication that the signature belongs to
+the owner." This is because there is no way to verify if the public key
+does belong to the individual. If this needs to be changed, you can
+sign it with your private key, so that the key is now trusted to you.
+
+2.
+mkdir assignment4
+- New directory to install coreutils
+cd coreutils-8.29
+emacs INSTALL
+- Understand how to set prefix to install in specific directory
+./configure --prefix=/u/cs/ugrad/siddharj/35L/assignment4/
+make
+make install
+
+3.
+cd assignment4/bin
+- Enter folder with executables for all the commands
+- Ran the executables: ./ls -a, ./ls -A, ./ls -a -A and ./ls -A
+- to reproduce the bug
+
+4.
+cd coreutils-8.29
+nano patch
+Paste the patch file text from the website.
+patch -p1 < patchfile
+- Patches issues in these files: ls.c, local.mk and a-option.sh
+
+5.
+autoreconf --force
+- Running make without running this first was giving an error
+- claiming that automate versions didn't match probably because
+- the system version was to old
+- this command forcefully remakes all the files eliminating this
+- mismatch error
+
+6. make
+- Recompiles code (with bug fix)
+- Runs a command called "make all-recursive" that recurses through
+- all directories
+- Looking for files that have been changed and recompiles those files
+- CC: indicates c file --> object file
+- ls.o is compiled as ls.c is changed
+ cd . && /bin/sh /u/cs/ugrad/siddharj/35L/coreutils-8.29/
+    build-aux/missing automake-1.13 --gnu Makefile
+ cd . && /bin/sh ./config.status Makefile depfiles
+config.status: creating Makefile
+
+A1.
+It improves the performance of the ls command, since it
+allows for each of the flags -a and -A to precedence over
+each other if they're put together in the same ls command.
+For example, if ./ls -a -A is run, the -A flag overwrites
+the -a flag and vice-versa.
+
+A2.
+The company will have to check all commands that involved ls
+as the working of ls has changed. Moreover, the company should
+check the updates in this version of coreutils and compare with
+the one they're using to see if any other bash scripts may trip
+up.
+
+A3.
+python randline.py /dev/null
+Output:
+File "/usr/local/cs/Python-2.7.14/lib/python2.7/random.py",
+line 277, in choice return seq[int(self.random() * len(seq))]
+# raises IndexError if seq is empty
+IndexError: list index out of range "
+/dev/null is an empty file, thus when randline.py attempts
+to read from this file and index elements from the file, it
+results in an error as there is no failsafe to ensure that
+the file is not empty
+
+A4.
+python3 randline.py
+Output:
+File "randline.py", line 65
+except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+python2 has an automatic tuple unpacking
+python3 deprecated this
+hence results in a different error syntax.
+
+

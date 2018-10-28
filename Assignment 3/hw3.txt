@@ -1,0 +1,38 @@
+A1.
+It improves the performance of the ls command, since it
+allows for each of the flags -a and -A to precedence over
+each other if they're put together in the same ls command.
+For example, if ./ls -a -A is run, the -A flag overwrites
+the -a flag and vice-versa.
+
+A2.
+The company will have to check all commands that involved ls
+as the working of ls has changed. Moreover, the company should
+check the updates in this version of coreutils and compare with
+the one they're using to see if any other bash scripts may trip
+up.
+
+A3.
+python randline.py /dev/null
+Output:
+File "/usr/local/cs/Python-2.7.14/lib/python2.7/random.py",
+line 277, in choice return seq[int(self.random() * len(seq))]
+# raises IndexError if seq is empty
+IndexError: list index out of range "
+/dev/null is an empty file, thus when randline.py attempts
+to read from this file and index elements from the file, it
+results in an error as there is no failsafe to ensure that
+the file is not empty
+
+A4.
+python3 randline.py
+Output:
+File "randline.py", line 65
+except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+python2 has an automatic tuple unpacking
+python3 deprecated this
+hence results in a different error syntax.
+
+

@@ -1,0 +1,60 @@
+Name: Siddharth Joshi (105032378)
+LabPartner: Arnav Garg (304911796)
+
+1. Created hw9.txt using emacs
+
+2. Checking out version 3.0 of Diffutils into a new branch named "quote"
+ git checkout -b quote v3.0 
+
+3. Applying the patch by running the patch command (this removes the ` character from output
+ statements but not from the comments)
+
+   patch -p1 <quote-3.0-patch.txt
+
+4 & 5. Using emacs function add-change-log-entry-other-window (C-x 4 a) added a ChangeLog entry 
+explaining the patch 
+
+6. Commiting these changes to the new branch
+
+   git add .
+   git commit -F ChangeLog
+
+7. Generating a formatted patchfile using "git format-patch"
+
+   git format-patch --stdout -1 > formatted-patch.txt
+
+8. Verifying my partner's patch
+
+   git checkout -b partner v3.0
+   git am < partnerPatch.txt
+
+   Running commands from README-hacking to perform a sanity check
+
+   ./bootstrap, ./configure, make, make check
+
+9. Verifying ChangeLog entry:
+   Applying my patch to v3.0 using git am < formated-patch.txt
+   
+   then running the aforementioned ./bootstrap, ./configure, make commands 
+   
+   make distdir
+   
+   emacs diffutils-3.0.1-e468/ChangeLog
+   
+   Shows the first message on the log to be mine, thus verifying the success of the ChangeLog
+   creation.
+
+10. Running command gitk on the newest merge that is not newer than 2015-01-25
+    
+    Downloaded XQuartx for Mac to allow for gui viewing in ssh
+    
+    ssh -X siddharj@lnxsrv06.seas.ucla.edu
+    
+    cd ~eggert/src/gnu/emacs
+
+    gitk - Opens a GUI in XQuartz which shows gitk
+
+    Found the commit by Professor Eggert on 2015-01-24 19:00:41
+
+    Took a screenshot and described this image in gitk-screenshot.png and gitk-description.txt
+    respectively

@@ -1,0 +1,19 @@
+2018-05-06  Siddharth Joshi  <siddharj@lnxsrv06.seas.ucla.edu>
+
+	* timespec.h: Replaces integer subtraction that was overflowing with direct comparison
+	and only if the seconds values are equal does it return the difference in
+	nanoseconds, a subtraction that is guaranteed not to overflow using ints
+	becasue the maximum value is only 8 digits long.
+
+--- lib/timespec.h	2005-09-21 23:05:39.000000000 -0700
++++ lib/timespec.h	2018-05-06 15:14:13.933954000 -0700
+@@ -45,8 +45,7 @@
+ static inline int
+ timespec_cmp (struct timespec a, struct timespec b)
+ {
+-  int diff = a.tv_sec - b.tv_sec;
+-  return diff ? diff : a.tv_nsec - b.tv_nsec;
++  return a.tv_sec == b.tv_sec ? a.tv_nsec - b.tv_nsec : a.tv_sec > b.tv_sec ? 1 : -1;
+ }
+ 
+ # if ! HAVE_DECL_NANOSLEEP

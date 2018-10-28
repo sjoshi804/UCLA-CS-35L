@@ -1,0 +1,65 @@
+1. If the other teams had actually been observing the bytes going across our network, 
+   sent through ssh, the data would still not be compromised. This is because of the
+   asymmetric key encryption that was used. The message is encrypted with the receiver's
+   public key (other teams can access this), but it is decrypted by a private key that is
+   available only to the receiver (not on the network essentially). The data is after this
+   encrypted by symmetric encryption as well (the Session Key). Regardless, the other teams
+   couldn't decrypt the data without the private key and hence the data is secure, even
+   if the network is monitored. 
+
+   (1) The other teams would still be unable to decrypt the data successfully, as they
+       still don't have access to the private key as they tapped in after the client/server
+       setup was complete. 
+   
+   (2) Access to the USB the beaglebone is booting from would give them access to the .ssh
+       folder as well, and hence they would have access to the private key then. 
+
+2. gpg --verify is not reallt able to verify the ownership of data. This is because 
+   it compares the decrypted cleartext signature to the decrypted data using the public key.
+   The following example will explain why this mechanism can be compromised. Assume person A
+   is trying to send person B some data. Person C however intercepts this data, changes it,
+   then signs it but send his public key instead of A's to Person B. Now, gpg --verify, will
+   use this public key to decrypt the data and compare it to the signature. Hence, it will 
+   show that person C signed and sent this file, and has in now way preserved the original
+   author's details. 
+   This can be fixed by trusting a Third-Party Organization that keeps track of the origin
+   point of the file with its Author. While the authority and authenticity of the Third-Party
+   Organization is not compromised, the verification will work as intended. 
+Name: Siddharth Joshi (105032378)
+LabPartner: Arnav Garg (304911796)
+
+1. Setting up the beagle bon
+Using instructions from Piazza
+
+2. Installing ssh software
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+
+3. Setting up server (from TA slides)
+
+   - Creating a user
+   sudo useradd -d /home/arnav -m arnav
+   sudo passwd arnav
+   
+   - Giving access to ssh into my beaglebone
+   cd /home/arnav
+   sudo mkdir .ssh
+   sudo chown -R arnav .ssh
+   sudo chmod 700 .ssh
+
+Since Arnav was not able to ssh into my beaglebone, despite being able to ping it
+we assumed there was an issue with the firewall protection, and hence to 
+circumvent this, we used a hotspot from my phone. And repeated the client-side ssh
+step after logging in to this wifi. 
+
+4. Client Side steps (From TA slides)
+   
+   ssh-keygen rsa 
+   ssh-copy-id -i sid@192.168.43.211 // Copying public key onto Arnav's beaglebone
+   eval "$(ssh-agent -s)" 	     // Enables ssh-agent
+   ssh-add 	     	  	     // Add private key to ssh-agent
+   ssh sid@192.168.43.211
+  
+   Doesn't ask for password, hence succesfully able to ssh without a password
+   henceforth. 
+   

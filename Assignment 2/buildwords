@@ -1,0 +1,12 @@
+#! /bin/sh
+cat $1 |
+tr [:upper:] [:lower:] |
+grep -E '<td>.+</td>' |
+awk 'NR % 2 == 0' |
+sed 's/<\/*[a-zA-Z]*>//g' |
+tr '`' ''\''' |
+sed 's/ \{2,\}//' |
+tr ',* ' '\n' |
+tr -s '\n' |
+sed '/[^pk'\''mnwlhaeiou]/d' |
+sort -u

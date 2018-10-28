@@ -1,0 +1,159 @@
+1.
+wget 
+http://web.cs.ucla.edu/classes/spring18/cs35L/assign/coreutils-with-bug.tar.gz
+- Downloads the tarball of the buggy coreutils
+
+2.
+tar -xzvf coreutils-with-bug.tar.gz
+- Unzips the contents of the file into coreutils-with-bug folder in the
+- current directory
+
+3. Building the program as is
+cd coreutils-with-bug
+./configure --prefix="/u/cs/ugrad/siddharj/35L/assignment4/coreutils-install"
+- Creates the makefile from the template and using the instructions in 
+- configure, --prefix sets the install destination to be this folder
+Runs successfully
+
+make 
+- Tries to compile the program
+Runs into error, the gist of which is encapsulated in the part of error output
+below
+
+"In file included from utimecmp.c:41:
+utimens.h:2: error: conflicting types for 'futimens'
+/usr/include/sys/stat.h:374: note: previous declaration of 'futimens' was here"
+
+4. Patching the program and rebuilding it
+wget http://web.cs.ucla.edu/classes/spring18/cs35L/assign/coreutils.diff
+- Downloads the patch file
+
+emacs coreutils.diff
+- Opens the file in emacs to see what it is doing to understand why it	
+- would  the bugs
+
+patch -p0 <coreutils.diff
+- -p0 is specified because going through the patchfile showed that
+- the filepaths were written assuming the patch command would be 
+- run from the root directory of coreutils-with-bug
+
+./configure --prefix="/u/cs/ugrad/siddharj/35L/assignment4/coreutils-install"
+- Creates the makefile from the template and using the instructions in
+- configure, --prefix sets the install destination to be this folder
+Runs successfully
+
+make
+Runs successfully this time
+
+make install
+Runs successfully, completing the custom installation
+
+The patch fixes the issue by replacing occurences of "futimens"
+with "coreutils_futimens" which hence doesn't redeclare "futimens"
+thus no longer causing a compilation error
+
+5. Navigated to directory with coreutils-with-bug
+Ran the commands given in the spec
+$ mkdir tmp
+$ cd temp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+
+-rw-r--r-- 1 siddharj csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 siddharj csugrad 0 2018-05-06 21:31:12.626212987 +0000 now1
+-rw-r--r-- 1 siddharj csugrad 0 2018-05-06 21:30:58.300723071 +0000 now
+
+This is wrong because the final command is supposed to arrange files
+newest to oldest, but it places the file created in 1918 first
+
+6. Debugging the program with the GNU Debugger
+Navigated to the folder with the ls.c file (src folder inside custom
+installation folder)
+
+emacs ls.c
+C-s sort
+
+Helped me find a sort_files() function, which probably was where the
+error originated from
+
+Opening the program in the GNU Debugger:
+gdb ls
+break sort_files
+run -lt --full-time
+Runs the program
+Stepping through it line by line, I found that the comparison for the files' times
+was happening in the compare_mtime function
+
+Putting a breakpoint in the compare_mtime function and stepping through it,
+I saw the comparison is happening within timespec_cmp
+Using list i was able to see the actual function and saw thaat this function returns
+a +ve number if A > B, 0 if A==B, -ve number if A < B
+
+Printing a.tv_nsec and b.tv_nsec for the 3 files, it becomes clear that the wwi-armistice
+file's large negative timestamp, overflows during subtraction and hence returns 
+an incorrect value.
+I replaced this with a comparison instead
+
+7. Fixing the bug
+Navigated to 'lib' folder to find the timespec.h file
+
+Used emacs to create a copy of it changing the timespec_cmp function to 
+return a.tv_sec == b.tv_sec ? a.tv_nsec - b.tv_nsec : a.tv_sec > b.tv_sec ? 1 : -1;
+
+8. Creating the diff file
+
+diff -u lib/timespec.h timespec.h > ls_time_patch.diff
+
+emacs timespec.h
+
+C-x 4 a
+
+2018-05-06  Siddharth Joshi  <siddharj@lnxsrv06.seas.ucla.edu>
+
+        * timespec.h: Replaces integer subtraction that was overflowing with direct comparison
+	and only if the seconds values are equal does it return the difference in
+	nanoseconds, a subtraction that is guaranteed not to overflow using ints
+	becasue the maximum value is only 8 digits long.
+
+cat ChangeLog > lab4.diff
+cat ls_time_patch.diff >> lab4.diff
+changed filepath in lab4.diff from 'timespec.h' to 'lib/timespec.h'
+
+
+9. Testing the patch
+patch -p0 < lab4.diff
+
+./configure --prefix="/u/cs/ugrad/siddharj/35L/assignment4/coreutils-install"
+
+make
+
+make install
+
+Navigating to a new directory to test the patch I ran the same commands again
+to get this output (that confirms that the patch worked correctly):
+
+-rw-r--r-- 1 siddharj csugrad 0 2018-05-06 21:51:12.646212987 +0000 now1
+-rw-r--r-- 1 siddharj csugrad 0 2018-05-06 21:50:58.341723071 +0000 now
+-rw-r--r-- 1 siddharj csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+10. Running the command on home directory of the SEASnet Linux Server
+The overflow resulted in the 1918 timestamp being converted to the future
+
+
+This issue manifests because time is stored in seconds relative to EPOCH time
+(with 0 centered at 1st Jan 1970 00:00:00), hence large negative values
+overflow to be positive as seen above
+
+To confirm this I created a file with timestamp 1968, this to converted to a time
+far in the future i.e. 2104.
+
+Upon further investigation, it became clear that the SEASnet NFS filesystem (used
+when we test in home)  has 32-bit timestamps and the local file system
+on a linux server (the ) has 64-bit
+timestamps.
+The 32-bit timestamps are unsigned and hence times before mtime, that would
+typically be stored as negative, overflow to result in large positive values. 
+    

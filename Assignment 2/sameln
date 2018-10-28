@@ -1,0 +1,36 @@
+#! /bin/sh
+
+FILES=$(find ./ -type f | sort)
+
+INT_I=0
+#Reads files while there are files left to read
+while read file1; do
+    INT_I=$(($INT_I+1))
+    INT_J=0
+    
+    #Checks if file is readable
+    if test ! -r "$file1";
+    then
+	echo "$file1 is not readable. File will be skipped."
+	continue
+    fi
+    
+    #Reads files while there are files left to read
+    while read file2;
+    do
+	INT_J=$(($INT_J+1))
+	if test $INT_J -le $INT_I || test ! -r "$file2"; 
+	then
+            continue
+	fi
+	
+	#If files are found to be identical then remove the actual file
+	#and set hard link to identical file
+	if cmp -s "$file1" "$file2";
+	then
+	    ln -f "$file1" "$file2"
+        fi
+
+    done <<< "$FILES"
+
+done <<< "$FILES"

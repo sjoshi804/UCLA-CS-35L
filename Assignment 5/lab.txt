@@ -1,0 +1,97 @@
+1. 
+Looked up syntax for parsing arguments from the terminal call to the file for
+c programs.
+--> int main(int argc, char** argv) - where argc has the number of integers
+    		       	      	    - and argv has the actual arguments
+				    - also the program name counts as one argument
+
+First checked if input was valid, if not exited with code 1 and error message
+Then Transliterated
+
+Transliteration Steps:
+	1. Read input
+	2. If character read is in From, print the corresponding character from To
+	3. else print the character as is
+	4. Continue until EOF is hit (by step 1)
+
+2. touch tr2u.c
+cat tr2b.c > tr2u.c
+-- since most of the code is similar
+then swapped out the code for IO Parsing and IO error checking with code using 
+read and write instead. 
+used read and write with nbytes set to 1, hence using directly executing system calls
+
+Compiled with commands:
+gcc -std=c11 -g tr2b.c -o tr2b
+gcc -std=c11 -g tr2u.c -o tr2u
+
+Tested the above scripts with:
+./tr2b 'abc' 'def'
+abcd
+Returns defd
+
+./tr2u 'abc' 'def'
+Returns defd
+
+3. Using the strace command
+   
+   strace -c -o strace1.txt ./tr2b '?#' 'ab' < input.txt > tr2b.txt
+   strace -c -o strace2.txt ./tr2u '?#' 'ab' < input.txt > truu.txt
+   strace -c -o strace3.txt ./tr2b '?#' 'ab' < input.txt
+   strace -c -o strace4.txt ./tr2u '?#' 'ab' < input.txt
+
+   -c: generates a summary of the # and type of each system call
+   -o: copies the output into the file passed as an argument
+
+a. First command checks system calls made by t2b (buffered) - when copying output to a file
+613 read calls
+611 write calls
+1250 total system calls
+
+b. Second command checks system calls made by t2u (unbuffered) - when copying output to a file
+5000000 read calls
+5000002 write calls
+10000024 total system calls
+
+c. Third command checks system calls made by t2b (buffered) - when writing to terminal
+613 read calls
+19855 write calls
+20494 total system calls
+
+d. Fourth command checks system calls made by t2u (unbuffered) - when writing to terminal
+5000000 read calls
+5000002 write calls
+10000024 total system calls
+
+It is evident from the above data that the unbuffered program is extremely inefficient
+as doing the read and write calls manually results in far more than required (nearly 1 
+each per byte) and hence one would be better using the getchar() and putchar() for IO
+
+4. Testing the porgrams with the time command
+time cat input.txt | ./tr2b '?#' 'ab' > tr2b.txt
+Returns:
+real	0m0.209s
+user	0m0.156s
+sys	0m0.031s
+
+time cat input.txt | ./tr2u '?#' 'ab' > tr2u.txt
+Returns:
+real	0m9.608s
+user	0m1.280s
+sys	0m8.351s
+
+time cat input.txt | ./tr2b '?#' 'ab'
+Returns: transliterated output and
+real 0m1.170s
+user 0m0.208s
+sys  0m0.141s
+
+time cat input.txt | ./tr2u '?#' 'ab'
+Returns: transliterated output and
+real	   0m8.421s
+user	   0m1.373s
+sys	   0m7.083s
+
+This confirms the above conclusion that buffered IO is significantly more efficient than
+unbuffered IO. 
+

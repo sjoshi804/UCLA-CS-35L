@@ -1,0 +1,84 @@
+BeagleBone Setup Instructions
+The board that we will be using for the assignment and that you need to purchase is BeagleBone Green Wireless. The other BeagleBone boards do not have wireless capabilities, which are crucial for the assignment.
+
+ 
+
+1.) Connect your BeagleBone to your computer using the USB cable.
+
+ 
+
+2.) Find BEAGLEBONE as an external storage device and open it.
+
+ 
+
+3.) Double-click on the "START.htm" file. This will open a webpage located on the BeagleBone to show you how to setup your board step-by-step. It will highlight the completed steps as green. You should expect the step "Plug in BeagleBone via USB" already highlighted as green. If the second step is not highlighted as green yet, install the drivers for your operating system. The links to those drivers are located on the page that you are currently on. After installing the drivers, restart your computer. If you did it correctly, the second step on "START.htm" will be highlighted as green.
+
+ 
+
+4.) If you are getting driver installation issues for newer MAC OS X versions and could not turn the second step green, download the driver located on HERE. 
+Afterwards, run "sudo rm -rf /System/Library/Extensions/HoRNDIS.kext" and restart your computer.
+
+ 
+
+5.) If you are using Windows, use Putty to SSH into your BeagleBone. Enter "192.168.7.2" as the hostname and "root" as the username. When it asks for the password, just hit enter since the default password for root is empty for your BeagleBone. If you are using Mac or Linux, just run “sudo ssh root@192.168.7.2” in your terminal. If you want to SSH as a user instead of root for some reason, use the username "debian" and password "temppwd".
+
+ 
+
+6.) After you successfully SSH into your BeagleBone, you should connect it to wifi. The tool we use for wifi connection management is "connmanctl". The steps to connect to wifi:
+
+Start the connmanctl terminal:
+
+sudo connmanctl
+
+Turn on the wifi for your BeagleBone:
+
+connmanctl> enable wifi
+
+Scan all available wifi access points:
+
+connmanctl> scan wifi
+
+List all the discovered access points:
+
+connmanctl> services
+
+The access point you will connect to will look something like this:
+
+CR3760-wifi wifi_506583d4fc5e_544e434150413937414239_managed_psk
+
+Register as the prospective client:
+
+connmanctl> agent on
+
+After you locate the access point you want to connect to, use the string next to the name of the access point as the input to the following command:
+
+connmanctl> connect wifi_506583d4fc5e_544e434150413937414239_managed_psk
+
+If the access point requires a wifi password, enter the password after "Passphrase?":
+
+Passphrase? 3760ClassNet
+
+Now you are connected to the wifi so close the application connmanctl:
+
+connmanctl> quit
+
+ 
+
+7.) You should find the IP address of your BeagleBone by running "ifconfig". It is located under the network interface "wlan0" and labeled as "inet addr". Your teammate will use this IP address to SSH into your BeagleBone from his/her BeagleBone.
+
+ 
+
+8.) After gaining Internet connection, you should first update the database of apt-get:
+
+sudo apt-get update
+
+Install xauth and xvfb for X11 forwarding support for future SSH connections to your BeagleBone:
+
+sudo apt-get install xauth
+sudo apt-get install xvfb
+
+ 
+
+9.) Some BeagleBones come with X11 disabled as a factory setting. Therefore, make sure that it is enabled before attempting the X11 forwarding part of the assignment. On both the server and client, check /etc/ssh/ssh_config and /etc/ssh/sshd_config files. Both can possibly disable X11 forwarding. Check for the line 'X11Forwarding no' and change it to 'X11Forwarding yes’. Additionally, make sure that ~/.ssh/config contains 'ForwardAgent yes' and 'ForwardX11 yes' for the relevant hosts.
+
+Also, you need to install an X11 client in your computer: XMing for Windows, XQuartz for Mac. Without these clients, you would not be able to see the X windows on your machine.

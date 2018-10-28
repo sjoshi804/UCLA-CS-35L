@@ -1,0 +1,32 @@
+1. Comparing sfrob and sfrobu with test data from assignment4
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrob
+real 	    0m0.002s
+user	    0m0.001s
+sys	    0m0.001s
+
+time printf '*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4' | ./sfrobu
+real 	    0m0.002s
+user 	    0m0.000s
+sys  	    0m0.003s
+
+Comparing with data from input.txt (used for previous parts)
+time ./sfrob < input.txt
+real 	     0m0.011s
+user	     0m0.005s
+sys	     0m0.004s
+
+time ./sfrobu < input.txt
+real 	      0m6.393s
+user	      0m0.912s
+sys	      0m6.127s
+
+time cat input.txt | ./sfrobu
+real 	      0m9.105s
+user	      0m1.224s
+sys	      0m9.143s
+
+This again makes it evident that the unbufferd IO is way worse than buffered IO.
+The final command which makes the program read from stdIO, highlights this even more
+because the regular file no longer buffers the contents of the file for the script.
+Hence bufferedIO seems to always be better than unbufferedIO.
+

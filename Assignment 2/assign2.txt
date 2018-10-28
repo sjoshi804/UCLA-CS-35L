@@ -1,0 +1,137 @@
+1. export LC_ALL = 'C'
+
+2. sort -d /usr/share/dict/words > words
+   (-d makes the sort consider only alphanumermic and space characters)
+
+3. wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/assign2.html
+man tr
+man sort
+man comm
+Used to understand what the functions do
+
+a. tr -c 'A-za-z' '[\n*]' < assign2.html
+  Replaces all characters that are not letters with a new line character
+b. tr -cs 'A-za-z' '[\n*]' < assign2.html
+   Same as above but replaces sequences of characters with a single new 
+   line character, hence giving a list of all the words in the html file
+c. tr -cs 'A-za-z' '[\n*]' < assign2.html | sort
+   Same as above but sorts the list of words
+d. tr -cs 'A-za-z' '[\n*]' < assign2.html | sort -u
+   Same	 as above but sorts the list of words removing duplicates
+e. tr -cs 'A-za-z' '[\n*]' < assign2.html | sort -u | comm - words
+   Same	 as above but compares the sorted list of words against 
+   words and gives a formmated outut in 3 columns, the first 
+   containing words only in webpage, the second containing words
+   only in the 2nd file and the third containing words in both files
+f. tr -cs 'A-za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words
+   Suppress the second and third column from the previous output, 
+   hence only show words that unique to file1, thus is a spellchceker of
+    sorts as it shows only incorrect words from the webpage
+
+4. wget http://mauimapp.com/moolelo/hwnwdseng.htm
+   Downloads the file
+
+5. Buildwords Script
+- Used cat $1 to pipe standard input to the following commands
+- Used tr [:upper:] [:lower:] to convert all uppercase characters
+  to lowercase
+- Used grep -E '<td>.+</td> to select all the td tags
+- Used awk 'NR % 2 == 0' to isolate only the even td tags
+- Used sed 's/<\/*[a-zA-Z]*>//g' to remove all occurences
+  of html tags
+- Used tr '`' ''\''' to replace backticks with apostrophes
+- Used sed 's/ \{2,\}//' to remove indentation by replacing 2+ spaces
+  with just 1
+- Used tr ',* ' '\n' to split words separated by spaces and/or commas
+  with a newline
+- Used tr -s '\n' to replace all sequences of new line characters with 
+  single new line characters
+- Used sed '/[^pk'\''mnwlhaeiou]/d' to delete all lines that contain
+  characters not
+  allowed in Hawaiian
+- Used sort -u to sort all the words while removing duplicates
+
+cat $1 |
+tr [:upper:] [:lower:] |
+grep -E '<td>.+</td>' |
+awk 'NR % 2 == 0' |
+sed 's/<\/*[a-zA-Z]*>//g' |
+tr '`' ''\''' |
+sed 's/ \{2,\}//' |
+tr ',* ' '\n' |
+tr -s '\n' |
+sed '/[^pk'\''mnwlhaeiou]/d' |
+sort -u
+
+chmod +x buildwords - to allow execution of the script
+
+Then ran the command given to check if list of words is outputted
+
+6. Spellcheck w hwords
+ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr [:upper:] [:lower:] | sort -u
+ | comm -23 - hwords | sed '/^$/d'
+
+7. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr [:upper:] [:lower:] | sort -u
+   | comm -23 - words | sed '/^$/d' | wc -l
+   38 Misspelled English Words
+
+  cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr [:upper:] [:lower:] | sort -u
+  | comm -23 - hwords | sed '/^$/d' | wc -l
+   405 Misspelled English Words
+
+8. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr [:upper:] [:lower:] | sort -u
+   | comm -23 - words | sed '/^$/d' > english_wrong
+
+   cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr [:upper:] [:lower:] | sort -u
+   | comm -23 - hwords | sed '/^$/d' > hawaiian_wrong
+
+   comm -13 english_wrong hawaiian_wrong
+   returns words that are misspelled in Hawaiian but not in English: 
+   (There are many, these are a few)
+   able
+   about
+   above
+
+   comm -23 english_wrong hawaiian_wrong
+   returns words that are misspelled in English but not in Hawaiian 
+   (only 3 exist)
+   halau
+   lau
+   wiki
+
+#! /bin/sh
+
+FILES=$(find ./ -type f | sort)
+
+INT_I=0
+#Reads files while there are files left to read
+while read file1; do
+    INT_I=$(($INT_I+1))
+    INT_J=0
+    
+    #Checks if file is readable
+    if test ! -r "$file1";
+    then
+	echo "$file1 is not readable. File will be skipped."
+	continue
+    fi
+    
+    #Reads files while there are files left to read
+    while read file2;
+    do
+	INT_J=$(($INT_J+1))
+	if test $INT_J -le $INT_I || test ! -r "$file2"; 
+	then
+            continue
+	fi
+	
+	#If files are found to be identical then remove the actual file
+	#and set hard link to identical file
+	if cmp -s "$file1" "$file2";
+	then
+	    ln -f "$file1" "$file2"
+        fi
+
+    done <<< "$FILES"
+
+done <<< "$FILES"
